@@ -15,83 +15,79 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:#0f172a;
+background:#08142b;
 padding:15px;
 color:#fff;
 }
 
 .container{
-max-width:1100px;
+max-width:1000px;
 margin:auto;
 }
 
 h1{
 text-align:center;
 margin-bottom:15px;
-font-size:24px;
 }
 
 .controls{
-background:#1e293b;
+background:#182742;
 padding:15px;
-border-radius:10px;
+border-radius:12px;
 margin-bottom:15px;
 }
 
-.controls label{
+label{
 display:block;
-margin:8px 0 4px;
+margin-top:10px;
+margin-bottom:5px;
 }
 
 input[type=file],
 input[type=range],
 select{
 width:100%;
-padding:8px;
-border:none;
-border-radius:8px;
-margin-bottom:8px;
+margin-bottom:10px;
 }
 
 button{
 width:100%;
 padding:12px;
-background:#2563eb;
-color:#fff;
 border:none;
 border-radius:8px;
+background:#2563eb;
+color:#fff;
 font-size:16px;
 cursor:pointer;
-margin-top:5px;
 }
 
 .preview{
 position:relative;
 background:#fff;
 padding:2px;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
 touch-action:none;
 }
 
-.screenshots{
+.screens{
 display:flex;
 gap:2px;
 }
 
 .frame{
 flex:1;
-background:#ddd;
-border:1px solid #2563eb;
-border-radius:6px;
+border:2px solid #2563eb;
+border-radius:8px;
 overflow:hidden;
+background:#ddd;
 }
 
 .frame img{
 width:100%;
 display:block;
-object-fit:cover;
 aspect-ratio:9/16;
+object-fit:cover;
 }
 
 #logo{
@@ -99,45 +95,43 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-width:140px;
+width:120px;
 opacity:.35;
 display:none;
-pointer-events:none;
 z-index:10;
 }
 
-.sticker{
+#emojiSticker{
 position:absolute;
 left:20px;
 top:20px;
 font-size:50px;
-cursor:move;
 display:none;
 z-index:999;
+cursor:move;
 user-select:none;
-touch-action:none;
 }
 
-.sticker-img{
+#customSticker{
 position:absolute;
 left:60px;
-top:100px;
+top:60px;
 width:100px;
 display:none;
-cursor:move;
 z-index:999;
-touch-action:none;
+cursor:move;
 }
 
 .footer{
 text-align:center;
-margin-top:12px;
+margin-top:15px;
+font-size:22px;
+font-weight:bold;
 }
 
 .footer a{
-color:#60a5fa;
 text-decoration:none;
-font-weight:bold;
+color:#60a5fa;
 }
 
 </style>
@@ -165,7 +159,7 @@ Show Logo
 </label>
 
 <label>Logo Size</label>
-<input type="range" id="logoSize" min="50" max="300" value="140">
+<input type="range" id="logoSize" min="50" max="300" value="120">
 
 <label>Logo Opacity</label>
 <input type="range" id="logoOpacity" min="10" max="100" value="35">
@@ -176,37 +170,30 @@ Show Logo
 <option value="#ef4444">Red</option>
 <option value="#22c55e">Green</option>
 <option value="#eab308">Yellow</option>
-<option value="#a855f7">Purple</option>
 <option value="#000000">Black</option>
 </select>
 
 <label>Background Color</label>
 <select id="bgColor">
 <option value="#ffffff">White</option>
-<option value="#f8fafc">Light Gray</option>
+<option value="#f3f4f6">Light Gray</option>
 <option value="#dbeafe">Sky Blue</option>
 <option value="#dcfce7">Mint Green</option>
-<option value="#fef3c7">Cream Yellow</option>
-<option value="#f3e8ff">Lavender</option>
-<option value="#fee2e2">Soft Pink</option>
-<option value="#e5e7eb">Silver</option>
 </select>
 
 <label>Emoji Sticker</label>
 <select id="emojiSelect">
-<option value="">No Emoji</option>
+<option value="">Select Emoji</option>
 <option>❤️</option>
 <option>🔥</option>
 <option>⭐</option>
-<option>✔️</option>
 <option>😊</option>
 <option>😍</option>
-<option>💚</option>
-<option>🕌</option>
-<option>☪️</option>
-<option>🌙</option>
-<option>📌</option>
+<option>✔️</option>
 <option>🎯</option>
+<option>📌</option>
+<option>🕌</option>
+<option>🌙</option>
 </select>
 
 <label>
@@ -231,7 +218,7 @@ PNG Download
 
 <div class="preview" id="capture">
 
-<div class="screenshots">
+<div class="screens">
 
 <div class="frame">
 <img id="preview1">
@@ -245,11 +232,9 @@ PNG Download
 
 <img id="logo">
 
-<div id="emojiSticker" class="sticker">
-❤️
-</div>
+<div id="emojiSticker">❤️</div>
 
-<img id="customSticker" class="sticker-img">
+<img id="customSticker">
 
 </div>
 
@@ -264,86 +249,76 @@ By Habibur Rahman
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <script>
-  function loadImage(input,target){
+  const preview1=document.getElementById("preview1");
+const preview2=document.getElementById("preview2");
 
-input.addEventListener("change",function(){
+document.getElementById("img1")
+.addEventListener("change",function(){
 
 if(this.files[0]){
 
-const reader=new FileReader();
-
-reader.onload=function(e){
-
-target.src=e.target.result;
-
-};
-
-reader.readAsDataURL(this.files[0]);
+preview1.src=
+URL.createObjectURL(this.files[0]);
 
 }
 
 });
 
-}
-
-loadImage(
-document.getElementById("img1"),
-document.getElementById("preview1")
-);
-
-loadImage(
-document.getElementById("img2"),
-document.getElementById("preview2")
-);
-
-const logo=document.getElementById("logo");
-const logoInput=document.getElementById("logoInput");
-const logoSize=document.getElementById("logoSize");
-const logoOpacity=document.getElementById("logoOpacity");
-const toggleLogo=document.getElementById("toggleLogo");
-
-logoInput.addEventListener("change",function(){
+document.getElementById("img2")
+.addEventListener("change",function(){
 
 if(this.files[0]){
 
-const reader=new FileReader();
+preview2.src=
+URL.createObjectURL(this.files[0]);
 
-reader.onload=function(e){
+}
 
-logo.src=e.target.result;
+});
+
+const logo=
+document.getElementById("logo");
+
+document.getElementById("logoInput")
+.addEventListener("change",function(){
+
+if(this.files[0]){
+
+logo.src=
+URL.createObjectURL(this.files[0]);
+
 logo.style.display="block";
 
-};
-
-reader.readAsDataURL(this.files[0]);
-
 }
 
 });
 
-logoSize.addEventListener("input",function(){
-
-logo.style.width=this.value+"px";
-
-});
-
-logoOpacity.addEventListener("input",function(){
-
-logo.style.opacity=this.value/100;
-
-});
-
-toggleLogo.addEventListener("change",function(){
+document.getElementById("toggleLogo")
+.addEventListener("change",function(){
 
 logo.style.display=
 this.checked ? "block" : "none";
 
 });
 
-const borderColor=
-document.getElementById("borderColor");
+document.getElementById("logoSize")
+.addEventListener("input",function(){
 
-borderColor.addEventListener("change",function(){
+logo.style.width=
+this.value+"px";
+
+});
+
+document.getElementById("logoOpacity")
+.addEventListener("input",function(){
+
+logo.style.opacity=
+this.value/100;
+
+});
+
+document.getElementById("borderColor")
+.addEventListener("change",function(){
 
 document
 .querySelectorAll(".frame")
@@ -356,13 +331,10 @@ this.value;
 
 });
 
-const bgColor=
-document.getElementById("bgColor");
+document.getElementById("bgColor")
+.addEventListener("change",function(){
 
-bgColor.addEventListener("change",function(){
-
-document
-.getElementById("capture")
+document.getElementById("capture")
 .style.backgroundColor=
 this.value;
 
@@ -371,46 +343,24 @@ this.value;
 const emojiSticker=
 document.getElementById("emojiSticker");
 
-const emojiSelect=
-document.getElementById("emojiSelect");
+document.getElementById("emojiSelect")
+.addEventListener("change",function(){
 
-const toggleEmoji=
-document.getElementById("toggleEmoji");
-
-const emojiSize=
-document.getElementById("emojiSize");
-
-emojiSelect.addEventListener("change",function(){
-
-emojiSticker.innerHTML=this.value;
-
-if(this.value){
-
-emojiSticker.style.display="block";
-
-}else{
-
-emojiSticker.style.display="none";
-
-}
+emojiSticker.innerHTML=
+this.value;
 
 });
 
-toggleEmoji.addEventListener("change",function(){
+document.getElementById("toggleEmoji")
+.addEventListener("change",function(){
 
-if(this.checked && emojiSelect.value){
-
-emojiSticker.style.display="block";
-
-}else{
-
-emojiSticker.style.display="none";
-
-}
+emojiSticker.style.display=
+this.checked ? "block" : "none";
 
 });
 
-emojiSize.addEventListener("input",function(){
+document.getElementById("emojiSize")
+.addEventListener("input",function(){
 
 emojiSticker.style.fontSize=
 this.value+"px";
@@ -420,50 +370,39 @@ this.value+"px";
 const customSticker=
 document.getElementById("customSticker");
 
-document
-.getElementById("stickerInput")
+document.getElementById("stickerInput")
 .addEventListener("change",function(){
 
 if(this.files[0]){
 
-const reader=new FileReader();
+customSticker.src=
+URL.createObjectURL(this.files[0]);
 
-reader.onload=function(e){
-
-customSticker.src=e.target.result;
-
-customSticker.style.display="block";
-
-};
-
-reader.readAsDataURL(this.files[0]);
+customSticker.style.display=
+"block";
 
 }
 
 });
 
-document
-.getElementById("stickerSize")
+document.getElementById("stickerSize")
 .addEventListener("input",function(){
 
 customSticker.style.width=
 this.value+"px";
 
 });
- function makeDraggable(el){
+  function makeDraggable(el){
 
+let isDragging=false;
 let startX=0;
 let startY=0;
-let initialX=0;
-let initialY=0;
-let dragging=false;
+let initialLeft=0;
+let initialTop=0;
 
-el.addEventListener("mousedown",startDrag);
-el.addEventListener("touchstart",startDrag,{passive:false});
+function start(e){
 
-function startDrag(e){
-
-dragging=true;
+isDragging=true;
 
 const point=
 e.touches ? e.touches[0] : e;
@@ -471,69 +410,56 @@ e.touches ? e.touches[0] : e;
 startX=point.clientX;
 startY=point.clientY;
 
-initialX=parseInt(el.style.left)||0;
-initialY=parseInt(el.style.top)||0;
+initialLeft=
+parseInt(el.style.left)||el.offsetLeft;
+
+initialTop=
+parseInt(el.style.top)||el.offsetTop;
 
 }
 
-document.addEventListener(
-"mousemove",
-drag
-);
+function move(e){
 
-document.addEventListener(
-"touchmove",
-drag,
-{passive:false}
-);
-
-function drag(e){
-
-if(!dragging) return;
+if(!isDragging) return;
 
 e.preventDefault();
 
 const point=
 e.touches ? e.touches[0] : e;
 
-let x=
-initialX+
-(point.clientX-startX);
+const dx=
+point.clientX-startX;
 
-let y=
-initialY+
-(point.clientY-startY);
+const dy=
+point.clientY-startY;
 
-el.style.left=x+"px";
-el.style.top=y+"px";
+el.style.left=
+(initialLeft+dx)+"px";
 
-}
-
-document.addEventListener(
-"mouseup",
-stopDrag
-);
-
-document.addEventListener(
-"touchend",
-stopDrag
-);
-
-function stopDrag(){
-
-dragging=false;
+el.style.top=
+(initialTop+dy)+"px";
 
 }
 
+function stop(){
+
+isDragging=false;
+
 }
 
-makeDraggable(
-document.getElementById("emojiSticker")
-);
+el.addEventListener("mousedown",start);
+el.addEventListener("touchstart",start,{passive:false});
 
-makeDraggable(
-document.getElementById("customSticker")
-);
+document.addEventListener("mousemove",move);
+document.addEventListener("touchmove",move,{passive:false});
+
+document.addEventListener("mouseup",stop);
+document.addEventListener("touchend",stop);
+
+}
+
+makeDraggable(emojiSticker);
+makeDraggable(customSticker);
 
 function downloadImage(){
 
@@ -541,17 +467,15 @@ html2canvas(
 document.getElementById("capture"),
 {
 scale:3,
-useCORS:true,
-backgroundColor:null
+useCORS:true
 }
-)
-.then(function(canvas){
+).then(function(canvas){
 
 const link=
 document.createElement("a");
 
 link.download=
-"gkh-photo-editing-pro.png";
+"gkh-photo-editing.png";
 
 link.href=
 canvas.toDataURL("image/png");
@@ -560,4 +484,8 @@ link.click();
 
 });
 
-} 
+}
+</script>
+
+</body>
+</html>
