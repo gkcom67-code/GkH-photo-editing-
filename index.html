@@ -1,47 +1,12 @@
-
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<style>
-
-
-body{
-background:black;
-color:#00ff88;
-text-align:center;
-padding-top:50px;
-font-family:Arial;
-}
-
-button{
-padding:14px 24px;
-background:#00ff88;
-border:none;
-border-radius:10px;
-font-size:18px;
-cursor:pointer;
-}
-
-
-
-</style>
-
-</head>
-
-<body>
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GKH Photo Editing</title>
+<title>GKH Photo Editing Pro</title>
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -92,37 +57,38 @@ button{
 width:100%;
 padding:12px;
 background:#2563eb;
-color:white;
+color:#fff;
 border:none;
 border-radius:8px;
 font-size:16px;
 cursor:pointer;
+margin-top:5px;
 }
 
 .preview{
 position:relative;
 background:#fff;
-padding:4px;
+padding:2px;
 border-radius:10px;
 overflow:hidden;
+touch-action:none;
 }
 
 .screenshots{
 display:flex;
-gap:4px;
+gap:2px;
 }
 
 .frame{
 flex:1;
 background:#ddd;
-border:2px solid #2563eb;
-border-radius:8px;
+border:1px solid #2563eb;
+border-radius:6px;
 overflow:hidden;
 }
 
 .frame img{
 width:100%;
-height:100%;
 display:block;
 object-fit:cover;
 aspect-ratio:9/16;
@@ -137,6 +103,30 @@ width:140px;
 opacity:.35;
 display:none;
 pointer-events:none;
+z-index:10;
+}
+
+.sticker{
+position:absolute;
+left:20px;
+top:20px;
+font-size:50px;
+cursor:move;
+display:none;
+z-index:999;
+user-select:none;
+touch-action:none;
+}
+
+.sticker-img{
+position:absolute;
+left:60px;
+top:100px;
+width:100px;
+display:none;
+cursor:move;
+z-index:999;
+touch-action:none;
 }
 
 .footer{
@@ -150,16 +140,13 @@ text-decoration:none;
 font-weight:bold;
 }
 
-.footer a:hover{
-text-decoration:underline;
-}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<h1>GKH Photo Editing</h1>
+<h1>GKH Photo Editing Pro</h1>
 
 <div class="controls">
 
@@ -205,7 +192,40 @@ Show Logo
 <option value="#e5e7eb">Silver</option>
 </select>
 
-<button onclick="downloadImage()">PNG Download</button>
+<label>Emoji Sticker</label>
+<select id="emojiSelect">
+<option value="">No Emoji</option>
+<option>❤️</option>
+<option>🔥</option>
+<option>⭐</option>
+<option>✔️</option>
+<option>😊</option>
+<option>😍</option>
+<option>💚</option>
+<option>🕌</option>
+<option>☪️</option>
+<option>🌙</option>
+<option>📌</option>
+<option>🎯</option>
+</select>
+
+<label>
+<input type="checkbox" id="toggleEmoji">
+Show Emoji
+</label>
+
+<label>Emoji Size</label>
+<input type="range" id="emojiSize" min="20" max="200" value="50">
+
+<label>Custom Sticker Image</label>
+<input type="file" id="stickerInput" accept="image/*">
+
+<label>Sticker Size</label>
+<input type="range" id="stickerSize" min="30" max="400" value="100">
+
+<button onclick="downloadImage()">
+PNG Download
+</button>
 
 </div>
 
@@ -225,6 +245,12 @@ Show Logo
 
 <img id="logo">
 
+<div id="emojiSticker" class="sticker">
+❤️
+</div>
+
+<img id="customSticker" class="sticker-img">
+
 </div>
 
 <div class="footer">
@@ -238,98 +264,300 @@ By Habibur Rahman
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <script>
+  function loadImage(input,target){
 
-function loadImage(input,target){
 input.addEventListener("change",function(){
+
 if(this.files[0]){
+
 const reader=new FileReader();
-reader.onload=e=>target.src=e.target.result;
+
+reader.onload=function(e){
+
+target.src=e.target.result;
+
+};
+
 reader.readAsDataURL(this.files[0]);
+
 }
+
 });
+
 }
 
-loadImage(document.getElementById("img1"),document.getElementById("preview1"));
-loadImage(document.getElementById("img2"),document.getElementById("preview2"));
+loadImage(
+document.getElementById("img1"),
+document.getElementById("preview1")
+);
 
-document.getElementById("logoInput").addEventListener("change",function(){
+loadImage(
+document.getElementById("img2"),
+document.getElementById("preview2")
+);
+
+const logo=document.getElementById("logo");
+const logoInput=document.getElementById("logoInput");
+const logoSize=document.getElementById("logoSize");
+const logoOpacity=document.getElementById("logoOpacity");
+const toggleLogo=document.getElementById("toggleLogo");
+
+logoInput.addEventListener("change",function(){
+
 if(this.files[0]){
+
 const reader=new FileReader();
-reader.onload=e=>{
+
+reader.onload=function(e){
+
 logo.src=e.target.result;
 logo.style.display="block";
-}
+
+};
+
 reader.readAsDataURL(this.files[0]);
+
 }
+
 });
 
-logoSize.oninput=()=>{
-logo.style.width=logoSize.value+"px";
-}
+logoSize.addEventListener("input",function(){
 
-logoOpacity.oninput=()=>{
-logo.style.opacity=logoOpacity.value/100;
-}
+logo.style.width=this.value+"px";
 
-toggleLogo.onchange=()=>{
-logo.style.display=toggleLogo.checked?"block":"none";
-}
-
-borderColor.onchange=()=>{
-document.querySelectorAll(".frame").forEach(frame=>{
-frame.style.borderColor=borderColor.value;
 });
-}
 
-bgColor.onchange=()=>{
-capture.style.backgroundColor=bgColor.value;
-}
+logoOpacity.addEventListener("input",function(){
 
-function downloadImage(){
-html2canvas(document.getElementById("capture")).then(canvas=>{
-const link=document.createElement("a");
-link.download="gkh-photo-editing.png";
-link.href=canvas.toDataURL("image/png");
-link.click();
+logo.style.opacity=this.value/100;
+
 });
-}
 
-</script>
+toggleLogo.addEventListener("change",function(){
 
-</body>
-</html>
+logo.style.display=
+this.checked ? "block" : "none";
 
-<script>
+});
 
+const borderColor=
+document.getElementById("borderColor");
+
+borderColor.addEventListener("change",function(){
 
 document
-.getElementById("clickBtn")
-.addEventListener("click",function(){
+.querySelectorAll(".frame")
+.forEach(frame=>{
 
-document.body.style.background =
-"#001f3f";
-
-document.querySelector("h1")
-.innerHTML =
-"GKH WEBSITE SUCCESSFULLY WORKING";
-
-document.querySelector("p")
-.innerHTML =
-"Your Website Is Live Now";
-
-this.innerHTML = "SUCCESS";
-
-this.style.background = "lime";
-
-this.style.color = "black";
+frame.style.borderColor=
+this.value;
 
 });
 
+});
 
+const bgColor=
+document.getElementById("bgColor");
 
-</script>
+bgColor.addEventListener("change",function(){
 
-</body>
+document
+.getElementById("capture")
+.style.backgroundColor=
+this.value;
 
-</html>
+});
 
+const emojiSticker=
+document.getElementById("emojiSticker");
+
+const emojiSelect=
+document.getElementById("emojiSelect");
+
+const toggleEmoji=
+document.getElementById("toggleEmoji");
+
+const emojiSize=
+document.getElementById("emojiSize");
+
+emojiSelect.addEventListener("change",function(){
+
+emojiSticker.innerHTML=this.value;
+
+if(this.value){
+
+emojiSticker.style.display="block";
+
+}else{
+
+emojiSticker.style.display="none";
+
+}
+
+});
+
+toggleEmoji.addEventListener("change",function(){
+
+if(this.checked && emojiSelect.value){
+
+emojiSticker.style.display="block";
+
+}else{
+
+emojiSticker.style.display="none";
+
+}
+
+});
+
+emojiSize.addEventListener("input",function(){
+
+emojiSticker.style.fontSize=
+this.value+"px";
+
+});
+
+const customSticker=
+document.getElementById("customSticker");
+
+document
+.getElementById("stickerInput")
+.addEventListener("change",function(){
+
+if(this.files[0]){
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+customSticker.src=e.target.result;
+
+customSticker.style.display="block";
+
+};
+
+reader.readAsDataURL(this.files[0]);
+
+}
+
+});
+
+document
+.getElementById("stickerSize")
+.addEventListener("input",function(){
+
+customSticker.style.width=
+this.value+"px";
+
+});
+ function makeDraggable(el){
+
+let startX=0;
+let startY=0;
+let initialX=0;
+let initialY=0;
+let dragging=false;
+
+el.addEventListener("mousedown",startDrag);
+el.addEventListener("touchstart",startDrag,{passive:false});
+
+function startDrag(e){
+
+dragging=true;
+
+const point=
+e.touches ? e.touches[0] : e;
+
+startX=point.clientX;
+startY=point.clientY;
+
+initialX=parseInt(el.style.left)||0;
+initialY=parseInt(el.style.top)||0;
+
+}
+
+document.addEventListener(
+"mousemove",
+drag
+);
+
+document.addEventListener(
+"touchmove",
+drag,
+{passive:false}
+);
+
+function drag(e){
+
+if(!dragging) return;
+
+e.preventDefault();
+
+const point=
+e.touches ? e.touches[0] : e;
+
+let x=
+initialX+
+(point.clientX-startX);
+
+let y=
+initialY+
+(point.clientY-startY);
+
+el.style.left=x+"px";
+el.style.top=y+"px";
+
+}
+
+document.addEventListener(
+"mouseup",
+stopDrag
+);
+
+document.addEventListener(
+"touchend",
+stopDrag
+);
+
+function stopDrag(){
+
+dragging=false;
+
+}
+
+}
+
+makeDraggable(
+document.getElementById("emojiSticker")
+);
+
+makeDraggable(
+document.getElementById("customSticker")
+);
+
+function downloadImage(){
+
+html2canvas(
+document.getElementById("capture"),
+{
+scale:3,
+useCORS:true,
+backgroundColor:null
+}
+)
+.then(function(canvas){
+
+const link=
+document.createElement("a");
+
+link.download=
+"gkh-photo-editing-pro.png";
+
+link.href=
+canvas.toDataURL("image/png");
+
+link.click();
+
+});
+
+} 
