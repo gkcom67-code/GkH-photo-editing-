@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<style>
+
+
+body{
+background:black;
+color:#00ff88;
+text-align:center;
+padding-top:50px;
+font-family:Arial;
+}
+
+button{
+padding:14px 24px;
+background:#00ff88;
+border:none;
+border-radius:10px;
+font-size:18px;
+cursor:pointer;
+}
+
+
+
+</style>
+
+</head>
+
+<body>
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GKH Photo Editing</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f172a;
+padding:15px;
+color:#fff;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:15px;
+font-size:24px;
+}
+
+.controls{
+background:#1e293b;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+.controls label{
+display:block;
+margin:8px 0 4px;
+}
+
+input[type=file],
+input[type=range],
+select{
+width:100%;
+padding:8px;
+border:none;
+border-radius:8px;
+margin-bottom:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+.preview{
+position:relative;
+background:#fff;
+padding:4px;
+border-radius:10px;
+overflow:hidden;
+}
+
+.screenshots{
+display:flex;
+gap:4px;
+}
+
+.frame{
+flex:1;
+background:#ddd;
+border:2px solid #2563eb;
+border-radius:8px;
+overflow:hidden;
+}
+
+.frame img{
+width:100%;
+height:100%;
+display:block;
+object-fit:cover;
+aspect-ratio:9/16;
+}
+
+#logo{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:140px;
+opacity:.35;
+display:none;
+pointer-events:none;
+}
+
+.footer{
+text-align:center;
+margin-top:12px;
+}
+
+.footer a{
+color:#60a5fa;
+text-decoration:none;
+font-weight:bold;
+}
+
+.footer a:hover{
+text-decoration:underline;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>GKH Photo Editing</h1>
+
+<div class="controls">
+
+<label>Screenshot 1</label>
+<input type="file" id="img1" accept="image/*">
+
+<label>Screenshot 2</label>
+<input type="file" id="img2" accept="image/*">
+
+<label>Logo Upload</label>
+<input type="file" id="logoInput" accept="image/*">
+
+<label>
+<input type="checkbox" id="toggleLogo" checked>
+Show Logo
+</label>
+
+<label>Logo Size</label>
+<input type="range" id="logoSize" min="50" max="300" value="140">
+
+<label>Logo Opacity</label>
+<input type="range" id="logoOpacity" min="10" max="100" value="35">
+
+<label>Border Color</label>
+<select id="borderColor">
+<option value="#2563eb">Blue</option>
+<option value="#ef4444">Red</option>
+<option value="#22c55e">Green</option>
+<option value="#eab308">Yellow</option>
+<option value="#a855f7">Purple</option>
+<option value="#000000">Black</option>
+</select>
+
+<label>Background Color</label>
+<select id="bgColor">
+<option value="#ffffff">White</option>
+<option value="#f8fafc">Light Gray</option>
+<option value="#dbeafe">Sky Blue</option>
+<option value="#dcfce7">Mint Green</option>
+<option value="#fef3c7">Cream Yellow</option>
+<option value="#f3e8ff">Lavender</option>
+<option value="#fee2e2">Soft Pink</option>
+<option value="#e5e7eb">Silver</option>
+</select>
+
+<button onclick="downloadImage()">PNG Download</button>
+
+</div>
+
+<div class="preview" id="capture">
+
+<div class="screenshots">
+
+<div class="frame">
+<img id="preview1">
+</div>
+
+<div class="frame">
+<img id="preview2">
+</div>
+
+</div>
+
+<img id="logo">
+
+</div>
+
+<div class="footer">
+<a href="https://www.facebook.com/share/1B8xQqm9Pq/" target="_blank">
+By Habibur Rahman
+</a>
+</div>
+
+</div>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<script>
+
+function loadImage(input,target){
+input.addEventListener("change",function(){
+if(this.files[0]){
+const reader=new FileReader();
+reader.onload=e=>target.src=e.target.result;
+reader.readAsDataURL(this.files[0]);
+}
+});
+}
+
+loadImage(document.getElementById("img1"),document.getElementById("preview1"));
+loadImage(document.getElementById("img2"),document.getElementById("preview2"));
+
+document.getElementById("logoInput").addEventListener("change",function(){
+if(this.files[0]){
+const reader=new FileReader();
+reader.onload=e=>{
+logo.src=e.target.result;
+logo.style.display="block";
+}
+reader.readAsDataURL(this.files[0]);
+}
+});
+
+logoSize.oninput=()=>{
+logo.style.width=logoSize.value+"px";
+}
+
+logoOpacity.oninput=()=>{
+logo.style.opacity=logoOpacity.value/100;
+}
+
+toggleLogo.onchange=()=>{
+logo.style.display=toggleLogo.checked?"block":"none";
+}
+
+borderColor.onchange=()=>{
+document.querySelectorAll(".frame").forEach(frame=>{
+frame.style.borderColor=borderColor.value;
+});
+}
+
+bgColor.onchange=()=>{
+capture.style.backgroundColor=bgColor.value;
+}
+
+function downloadImage(){
+html2canvas(document.getElementById("capture")).then(canvas=>{
+const link=document.createElement("a");
+link.download="gkh-photo-editing.png";
+link.href=canvas.toDataURL("image/png");
+link.click();
+});
+}
+
+</script>
+
+</body>
+</html>
+
+<script>
+
+
+document
+.getElementById("clickBtn")
+.addEventListener("click",function(){
+
+document.body.style.background =
+"#001f3f";
+
+document.querySelector("h1")
+.innerHTML =
+"GKH WEBSITE SUCCESSFULLY WORKING";
+
+document.querySelector("p")
+.innerHTML =
+"Your Website Is Live Now";
+
+this.innerHTML = "SUCCESS";
+
+this.style.background = "lime";
+
+this.style.color = "black";
+
+});
+
+
+
+</script>
+
+</body>
+
+</html>
+
